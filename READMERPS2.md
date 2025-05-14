@@ -107,3 +107,84 @@ app.component.html
 
 ************************************************** (14/05/2025)
 
+* Configuración Angular-Schematics en: settings.json
+
+{
+    "angular-schematics.schematicsDefaultOptions": {
+        "angular-*": {
+            "externalTemplate": true,
+            "skipStyle": true
+        }
+    }
+}
+
+* Carga Perezosa, carga por defecto de nuestro componente
+* Hace una importación que es un promesa y cuando ser recupera la importación carga nuestro componente
+
+export const routes: Routes = [
+  {
+    path: 'dashboard',
+    loadComponent: ()=>import('./gifs/pages/dashboard-page/dashboard-page.component')
+      .then((c)=>c.DashboardPageComponent)
+  }
+
+* Otra solución es dejar la promesa 
+* Y añadirle la definición de la clase del componente un 'default'
+
+export const routes: Routes = [
+  {
+    path: 'dashboard',
+    loadComponent: ()=>import('./gifs/pages/dashboard-page/dashboard-page.component')
+  }
+
+Y añadimos 'default'
+export default class DashboardPageComponent { }
+
+************************************************** (14/05/2025)
+
+* Rutas hijas: children
+* http://localhost:4200/dashboard
+* http://localhost:4200/dashboard/search
+* http://localhost:4200/dashboard/trending
+
+export const routes: Routes = [
+  {
+    path: 'dashboard',
+    loadComponent: ()=>import('./gifs/pages/dashboard-page/dashboard-page.component'),
+    children: [
+      {
+        path: 'trending',
+        loadComponent: ()=>import('./gifs/pages/trending-page/trending-page.component')
+      },
+      {
+        path: 'search',
+        loadComponent: ()=>import('./gifs/pages/search-page/search-page.component')
+      },
+    ]
+
+************************************************** (14/05/2025)
+
+* Rutas hijas: children * Por defecto
+* También podemos añadir una ruta hija por defecto
+
+export const routes: Routes = [
+  {
+    path: 'dashboard',
+    loadComponent: ()=>import('./gifs/pages/dashboard-page/dashboard-page.component'),
+    children: [
+      ------------------------------
+      {
+        path: '**',
+        redirectTo: 'trending'
+      }
+    ]
+
+************************************************** (14/05/2025)
+
+* Componentes para el menú lateral
+
+
+
+
+
+
