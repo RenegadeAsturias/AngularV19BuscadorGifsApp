@@ -201,9 +201,60 @@ https://fontawesome.com/icons
 Ejemplo del icono de la lupa para el buscador de iconos
 <i class="fa-solid fa-magnifying-glass"></i>
 
-************************************************** (14/05/2025)
+************************************************** (16/05/2025)
+* Angular: Environments:
 
-* Angular: Environments y Path Alias
+$ ng g environments
+CREATE src/environments/environment.ts (31 bytes)
+CREATE src/environments/environment.development.ts (31 bytes)
+UPDATE angular.json (2964 bytes)
+
+export const environment = {
+  production: true,
+  companyName: 'Gifs',
+  companyName2: 'App',
+  eslogan: 'Maneja tus gifs',
+  // Api keys
+  // URLS
+};
+
+* En la clase del componente cabecera, creamos una referencia al environment
+export class GifsSideMenuHeaderComponent {
+  envs = environment;
+}
+
+* Y en el html de la cabecera ya pintamos sus valores
+Ejemplo: {{envs.companyName}}
 
 
+************************************************** (16/05/2025)
+* Angular: Path Alias
+
+import { environment } from '../../../../../environments/environment';
+
+En typescript configuramos en el tsconfig.json, una propiedad 'baseURL'
+Y definimos el alias: @environments que apunta a: src/environments/*"
+Una vez añadido el alias borramos el import anterior y ya el assitente nos sugiere la nueva ruta:
+
+// import { environment } from '../../../../../environments/environment';
+import { environment } from '@environments/environment';
+// que apunta a: module "c:/angular/AngularV19GifsApp/src/environments/environment"
+// y que si hacemos clic nos lleva al objeto
+
+"compilerOptions": {
+  "baseUrl": ".",
+  "paths": {
+    "@environments/*": ["src/environments/*"]
+  },
+
+
+
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+git add . 
+git commit -m "Curso AngularV19GifsApp" 
+git push -u origin main
 
