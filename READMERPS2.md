@@ -182,9 +182,28 @@ export const routes: Routes = [
 ************************************************** (14/05/2025)
 
 * Componentes para el menú lateral
+* Componente gifs-side-menu
+* Componente gifs-side-menu-header
+* Componente gifs-side-menu-options
+
+************************************************** (14/05/2025)
+
+RouterLinks: Desde componentes hijos
 
 
+* Para obtener las fuentes para el menú, descargamos la versión más actual: 6.7.2
+https://cdnjs.com/libraries/font-awesome
+Copiamos el link de la versión y lo añadimos al index.html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+* Para obtener los iconos de menú utilizamos el buscador de la página:
+https://fontawesome.com/icons
+Ejemplo del icono de la lupa para el buscador de iconos
+<i class="fa-solid fa-magnifying-glass"></i>
+
+************************************************** (14/05/2025)
+
+* Angular: Environments y Path Alias
 
 
 
