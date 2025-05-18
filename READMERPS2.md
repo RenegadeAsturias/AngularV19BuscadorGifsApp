@@ -253,8 +253,73 @@ import { environment } from '@environments/environment';
 * Component gif-list
 * Component gif-list-item
 
+************************************************** (19/05/2025)
+* Pasar los datos a los componentes, pasos:
+
+1º- De momento, para no crearnos un servicio aún, definimos un array de strings urls
+y las añadimos en la clase del componente:
+trending-page.component.ts
+
+const imageUrls: string[] = [
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-6.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-7.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-8.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-9.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-10.jpg",
+	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg"
+];
+
+export default class TrendingPageComponent {
+  gifs = imageUrls; *************************** Puesto que el array está fuera de la clase
+}
 
 
+2º- Vamos a empezar por el objeto más inferior
+y añadimos en la clase del componente 'gif-list-item' que vamos a recibir un input con una url
+Donde lo que requerimos que nos llegue es 'imageUrl' que una señal:
+
+export class GifListItemComponent {
+  imageUrl = input.required<string>(); ********** valor requerido de una url señal
+}
+
+3º- En el html de la clase del componente 'gif-list-item'
+y puesto que lo que vamos a pintar es una señal tendremos: [src]="imageUrl()"
+
+<img class="h-auto max-w-full rounded-lg" [src]="imageUrl()" alt="" />
+
+4º- En la clase del componente da la lista de gifs : 'gif-list'
+nos tiene que llegar el listado de urls:
+
+export class GifListComponent {
+  gifs = input.required<string[]>(); ********** valor requerido del listado de urls señal
+}
+
+5º- En la etiqueta del html de la clase hay que mandar cada gif al componente hijo
+que espera la url de la imagen para pintar el gif
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  @for (gif of gifs(); track gif) {
+    <gif-list-item [imageUrl]="gif"/>
+  }
+</div>
+
+6º- En la etiqueta del html de la clase 'trending-page' pasamos el array de urls
+
+* En la clase del componente
+export default class TrendingPageComponent {
+  gifs = signal(imageUrls); ******************* Puesto que el array está fuera de la clase
+}
+
+* En el html del componente, que también llama a la señal del array
+<section class="py-5">
+  <gif-list [gifs]="gifs()"/>
+</section>
 
 
 
