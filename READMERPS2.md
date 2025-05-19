@@ -321,6 +321,15 @@ export default class TrendingPageComponent {
   <gif-list [gifs]="gifs()"/>
 </section>
 
+************************************************** (20/05/2025)
+
+Sección 7 - Inicio buscador de gifs
+
+
+
+
+
+
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
