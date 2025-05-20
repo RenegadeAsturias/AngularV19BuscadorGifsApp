@@ -84,6 +84,6 @@ Sección 7 - Inicio buscador de gifs
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 git add . 
-git commit -m "Curso AngularV19GifsApp" 
+git commit -m "Curso AngularV19BuscadorGifsApp" 
 git push -u origin main
 
