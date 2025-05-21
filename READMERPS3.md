@@ -71,11 +71,12 @@ git push -u origin main
 
 
 
-************************************************** (20/05/2025)
+************************************************** (21/05/2025)
 
 Sección 7 - Inicio buscador de gifs
 
-
+Comenzamos la sección 7 y vamos a transformar la anterior aplicación AngularV19GifsApp
+que mostraba un listado plano de gifs en una aplicación que permitirá buscar gifs...
 
 
 
