@@ -68,15 +68,26 @@ git add .
 git commit -m "Curso AngularV19BuscadorGifsApp" 
 git push -u origin main
 
+8º Ojooooooo que he creado el proyecto con el contenido de github, si trato de arrancarlo
+reneg@DESKTOP-LMA62OH MINGW64 /c/angular/AngularV19BuscadorGifsApp (main)
+$ ng serve -o
+Node packages may not be installed. Try installing with 'npm install'.
+Error: Could not find the '@angular-devkit/build-angular:dev-server' builder's node package.
+
+9º ¡Me dará error!, hay que instarlar los módulos con: npm install
+reneg@DESKTOP-LMA62OH MINGW64 /c/angular/AngularV19BuscadorGifsApp (main)
+$ npm install
 
 
-
-************************************************** (21/05/2025)
+************************************************** (24/05/2025)
 
 Sección 7 - Inicio buscador de gifs
 
 Comenzamos la sección 7 y vamos a transformar la anterior aplicación AngularV19GifsApp
 que mostraba un listado plano de gifs en una aplicación que permitirá buscar gifs...
+
+Vamos a utilizar la API de : GIPHY Developers y lo primero es crearnos una cuenta
+https://developers.giphy.com/
 
 
 
