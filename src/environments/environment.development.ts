@@ -6,6 +6,7 @@ export const environment = {
   eslogan: 'Maneja tus gifs',
 
   // Api keys
+  giphApiKey : 'AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP'
 
   // URLS
 
