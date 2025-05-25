@@ -136,6 +136,29 @@ https://api.giphy.com/v1/gifs/trending?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&
 
 ........... continuar...
 
+La idea es tipar los datos de la llamada en interfaces, creamos un fichero : giphy.interfaces.ts
+para que contenga las interfaces de giphy.
+
+1º Desde el Postman copiamos al portapapeles toda la data de la llamada.
+2º Desde el VSCode tener el fichero: giphy.interfaces.ts abierto
+2º Desde el VSCode abrir la paleta de comandos: Shift+Control+P
+3º Buscar Paste JSON as Code
+4º Nos pide tipo y selecciono: JSON
+5º El asistente nos pide: Top-level type name?
+y escribimos GiphyResponse
+y nos tipa los datos de la respuesta:
+
+export interface GiphyResponse {
+  data:       GiphyItem[];
+  meta:       Meta;
+  pagination: Pagination;
+}
+
+export interface GiphyItem {
+  type:                       Type;
+  id:                         string;
+  ...........
+}
 
 
 
