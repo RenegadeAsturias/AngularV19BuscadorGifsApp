@@ -134,8 +134,6 @@ https://api.giphy.com/v1/gifs/trending?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&
 
 ************************************************** (26/05/2025)
 
-........... continuar...
-
 La idea es tipar los datos de la llamada en interfaces, creamos un fichero : giphy.interfaces.ts
 para que contenga las interfaces de giphy.
 
@@ -159,6 +157,50 @@ export interface GiphyItem {
   id:                         string;
   ...........
 }
+
+************************************************** (27/05/2025)
+
+1º- Creamos un servicio para toda la lógica de la gestión de gifs:
+/scr/app/gifs/services/gifs.service.ts
+
+@Injectable({providedIn: 'root'})
+export class GifService {
+  ....
+}
+
+2º- Añadimos en nuestros environments una variable para guardar la base url de giphy
+export const environment = {
+  // Api keys
+  giphyUrl : 'https://api.giphy.com/v1'
+}
+
+3º En nuestro servicio, en lugar de 'fetch' vamos a utilizar el HttpCliente
+así que lo inyectamos en nustro servicio:
+
+@Injectable({providedIn: 'root'})
+export class GifService {
+  private http = inject(HttpClient)  <<- inyectamos HttpClient (tiene que ser proveído, más abajo)
+  ... ... ...
+}
+
+4º Para que nos inyecte el HttpClient ya hemos puesto la línea en le servicio
+pero ahora nos falta proveerlo (de dónde viene)
+para ello, vamos al 'app.config.ts' y añadimos el siguiente provider:
+
+*Si lo dejamos así: provideHttpClient(),
+-Angular va a estar utilizando en el fondo las peticiones xhr tradicionales
+
+*Si lo dejamos así: provideHttpClient(withFetch()),
+-Para trabajar con el nuevo estardar que es el fetch
+trabajamos con los Observables pero en el fondo van a ser peticiones fetch
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(withFetch()),  <<-- proveemos el cliente HttpClient (para que pueda ser inyectado)
+  ]
+};
 
 
 
