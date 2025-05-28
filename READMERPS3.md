@@ -235,6 +235,78 @@ export default class TrendingPageComponent {
 }
 
 
+************************************************** (29/05/2025)
+
+* La interface que construimos para obtener los datos del servicio
+es realmente muy compleja, nos interesa más crear una nueva interface más pequeña 
+y más simple para encapsular las propiedades que vamos a manejar en la aplicación:
+
+creamos una nueva interface: interfaces/gif.interface.ts
+
+export interface Gif {
+  id: string;
+  title: string;
+  url: string;
+}
+
+* En nuestro servicio definimos una variable para contener nuestro listado de Gifs
+
+@Injectable({providedIn: 'root'})
+export class GifService {
+  private http = inject(HttpClient)
+  trendingGifs = signal<Gif[]>([]) <<--- Esta señal es un array de Gifs
+
+* Para convertir los datos que viene de la llamada http en objectos de tipo Gif
+de la nueva interface, necesitamos un mapper, nos creamos uno para ello:
+/mappers/gif.mapper.ts
+
+export class GifMapper {
+
+  // Un método para convertir una clase GiphyItem en Gif
+  static mapGiphyItemToGif(item: GiphyItem): Gif {  
+    return {
+      id: item.id,
+      title: item.title,
+      url: item.images.original.url
+    };
+  }
+
+  // Un método para convertir un Array de clases GiphyItem en un Array de clases Gif
+  static mapGiphyItemsToGifArray(items: GiphyItem[]): Gif[] {   
+    return items.map(this.mapGiphyItemToGif); <--- LLamamos al metódo anterior recursivamente
+  }
+
+}
+
+* Ahora en la llamada a la petición http del servicio
+utilizamos el Mapper en la subscripción para mapear el tipo de la respuesta.
+Y asignamos el array de Gifs obtenido a nuestra variable creada anteriormente:
+
+
+@Injectable({providedIn: 'root'})
+export class GifService {
+
+  loadTrendingGifs() {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+      },
+    }).subscribe((resp)=>{
+      const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data); <<<--mapeamos la respuesta con el mapper
+
+      // Y ahora asignamos a nuestra variable anterior: 
+      // trendingGifs = signal<Gif[]>([]) <<--- Esta señal es un array de Gifs
+      // El array de Gifs devuelto y mapeado:
+      this.trendingGifs.set(gifs);  <<<--- Array asignado
+
+      console.log({gifs});
+    });
+  }
+
+}
+
+
 
 
 
