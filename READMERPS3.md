@@ -202,6 +202,39 @@ export const appConfig: ApplicationConfig = {
   ]
 };
 
+************************************************** (28/05/2025)
+
+* Cuando hacemos una petición GET, PUT, PATCH, DELETE, ...
+  la petición no se va a disparar hasta que no te subscribas a la petición
+
+  loadTrendingGifs() {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+      },
+    }).subscribe((resp)=>{
+      console.log({resp});
+    });
+  }
+
+* En nuestro TrendingPageComponent inyectamos el servicio
+que por estar definido como un: @Injectable({providedIn: 'root'})
+se comportaría como un singleton y nos devolvería una instancia del servicio
+si ya existe una instancia, nos devuelve esa y si no existe una instancia nos crea una.
+
+@Component({
+  selector: 'app-trending-page',
+  imports: [GifListComponent],
+  templateUrl: './trending-page.component.html',
+})
+export default class TrendingPageComponent {
+  gifs = imageUrls;
+
+  gifService = inject(GifService)
+}
+
+
 
 
 
