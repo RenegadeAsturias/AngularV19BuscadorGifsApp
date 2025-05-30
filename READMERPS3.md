@@ -374,7 +374,44 @@ export default class TrendingPageComponent {
 
 * Ahora se muestran correctamente los Gifs traídos del API
 
+************************************************** (31/05/2025)
+* Diseño de pantalla: Buscador de Gifs
 
+* En nuestra página: search-page.component.html
+* Creamos un input buscador y escuchamos el evento Enter
+* con #txtSearch creamos una referencia local al objeto
+* y con esa referencia obtenemos el valor de la cadena de entrada en el input.
+
+<section class="flex flex-col gap-4">
+  <input type="text" placeholder="Buscar gifs" class="mt-3 border border-gray-300 rounded-md p-2"
+    (keyup.enter)="onSearh(txtSearch.value)" 
+    #txtSearch <<<----------------Referencia local al objeto
+  />
+</section>
+
+* Y en la clase implementamos un método que recibe el valor introducido y lo muestra
+export default class SearchPageComponent {
+  onSearch(query:string) {
+    console.log({query});
+  }
+}
+
+* Para implementar el Search necesitamos el servicio de de Giphy:
+
+* Habíamos creado un API Key para una sección anterior
+* Y recuperamos el EndPoint para el Trending
+* Ahora buscamos el EndPoint para el Search
+
+* En el formulario nos pide un valor para el parámetro 'q'
+* que representa la query. Por ejemplo: DragonBall
+* que concatenará en la URL con q=DragonBall
+
+Request URL
+https://api.giphy.com/v1/gifs/search?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&q=DragonBall&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
+
+* Creamos en el servicio el método de búsqueda e implementamos la query de búsqueda
+
+... continuar...
 
 
 

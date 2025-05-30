@@ -26,6 +26,5 @@ const imageUrls: string[] = [
 })
 export default class TrendingPageComponent {
   // gifs = imageUrls; *Dejamos de utilizar el array de Gifs a fuego que implementamos al principio
-
   gifService = inject(GifService)
 }

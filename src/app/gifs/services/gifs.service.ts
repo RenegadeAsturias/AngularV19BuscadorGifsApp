@@ -17,6 +17,9 @@ export class GifService {
     this.loadTrendingGifs();
   }
 
+  // Ejemplo de llamada PHYURL
+  // https://api.giphy.com/v1/gifs/trending?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&limit=25&offset=0&rating=g&bundle=messaging_non_clips
+
   loadTrendingGifs() {
     this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
       params: {
@@ -29,6 +32,21 @@ export class GifService {
       this.trendingGifsLoading = signal(false);
       console.log({gifs});
     });
+  }
+
+  // Ejemplo de llamada PHYURL
+  // https://api.giphy.com/v1/gifs/search?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&q=DragonBall&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
+
+  searchGifs(query: string) {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+        q: query,
+      }
+    }).subscribe((resp)=>{
+      console.log({resp});
+    })
   }
 
 }
