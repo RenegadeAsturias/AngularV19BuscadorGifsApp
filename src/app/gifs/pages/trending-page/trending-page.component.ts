@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { GifListComponent } from "../../components/gif-list/gif-list.component";
 import { GifService } from '../../services/gifs.service';
 
+/** Ahora ya no vamos a necesitar este array a a fuego de imágenes cargadas en el array
 const imageUrls: string[] = [
 	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg",
 	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg",
@@ -16,6 +17,7 @@ const imageUrls: string[] = [
 	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-10.jpg",
 	"https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg"
 ];
+*/
 
 @Component({
   selector: 'app-trending-page',
@@ -23,7 +25,7 @@ const imageUrls: string[] = [
   templateUrl: './trending-page.component.html',
 })
 export default class TrendingPageComponent {
-  gifs = imageUrls;
+  // gifs = imageUrls; *Dejamos de utilizar el array de Gifs a fuego que implementamos al principio
 
   gifService = inject(GifService)
 }

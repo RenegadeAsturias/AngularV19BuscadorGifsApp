@@ -306,6 +306,74 @@ export class GifService {
 
 }
 
+************************************************** (30/05/2025)
+* Mostrar Gifs en pantalla
+
+* En nuestro servicio, añadimos una nueva señal para controlar cuando se han cargado ya los gifs
+* La inicializamos en la clase a false, cuando los gisfs todavía no están cargados
+* Y cuando se terminan de cargar los datos, se actualiza 
+
+@Injectable({providedIn: 'root'})
+export class GifService {
+  trendingGifsLoading = signal(true); <<<--------------- Inicializamos las variable
+
+  loadTrendingGifs() {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+      },
+    }).subscribe((resp)=>{
+      const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+      this.trendingGifs.set(gifs);
+      this.trendingGifsLoading = signal(false); <<<--------------- Gifs ya cargados
+    });
+  }
+
+}
+
+* En nuestro component trending-page.component.ts
+* 1º Eliminamos el array estático de gifs a fuego que utilizábamos
+* 2º Podríamos sustituiro con una señal computada, pero de momento dejamos solo el servicio
+gifs = computed(()=> this.gifService.trendingGifs());
+
+export default class TrendingPageComponent {
+  // gifs = imageUrls; <<<--------1º Eliminamos el array estático de gifs a fuego que utilizábamos
+
+  gifService = inject(GifService)
+}
+
+* En nuestro trending-page.component.html, enviábamos el array de gifs que quitamos
+<section class="py-5">
+  <gif-list [gifs]="gifs"/> <<<---Teníamos un array de strings con las urls
+</section>
+
+* Y ahora tenemos que llamar al servicio para obtener el array
+* e ir cambian en las clases el tipo de array 
+* porque el anterior era del tipo: <string> y el nuevo es de tipo <Gif>
+<section class="py-5">
+  <gif-list [gifs]="gifService.trendingGifs()"/> <<<---Ahora enviamos un array de Gifs
+</section>
+
+* Como esto estaba en cascada, ahora hay que arreglar también: gif-list.component.html
+* Aquí me llegaba un gif, que era un string con la url, pero con el cambio anterior
+* ahora me está llegando un objeto Gif y le estoy mandando a [imageUrl]
+* un objeto cuando está esperando un string con la url como antes
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  @for (gif of gifs(); track gif) {
+    <gif-list-item [imageUrl]="gif"/> <<<---Aquí me llegaba un gif, que era un string con la url
+  }
+</div>
+
+* Para solucionarlo:
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  @for (gif of gifs(); track gif) {
+    <gif-list-item [imageUrl]="gif.url"/> <<<---Así mando la url del objeto Gif y solucionado
+  }
+</div>
+
+* Ahora se muestran correctamente los Gifs traídos del API
+
 
 
 
