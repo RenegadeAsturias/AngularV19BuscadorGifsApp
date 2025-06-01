@@ -411,7 +411,36 @@ https://api.giphy.com/v1/gifs/search?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&q=
 
 * Creamos en el servicio el método de búsqueda e implementamos la query de búsqueda
 
-... continuar...
+************************************************** (01/06/2025)
+
+* Implmentamos la búsqueda en el servicio GifService (de momento solo imprimimos en resultado en el log)
+
+ searchGifs(query: string) {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+        q: query,
+      }
+    }).subscribe((resp)=>{
+      const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+      console.log({search: gifs});
+    })
+  }
+
+* Y en el search-page.component, inyectamos el servicio
+* Y cuando de enter en la caja de búsqueda llamamos al método: searchGifs
+* del servicio con la llamada a la Api y al EndPoint search 
+
+export default class SearchPageComponent {
+
+  gifService = inject(GifService);
+
+  onSearch(query:string) {
+    console.log("query="+{query});
+    this.gifService.searchGifs(query);
+  }
+}
 
 
 

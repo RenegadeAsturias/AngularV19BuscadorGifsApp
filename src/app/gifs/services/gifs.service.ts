@@ -45,7 +45,8 @@ export class GifService {
         q: query,
       }
     }).subscribe((resp)=>{
-      console.log({resp});
+      const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+      console.log({search: gifs});
     })
   }
 
