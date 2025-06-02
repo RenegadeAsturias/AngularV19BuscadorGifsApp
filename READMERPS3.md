@@ -574,8 +574,27 @@ export default class SearchPageComponent {
   <gif-list [gifs]="[gifs()]"/>
 </section>
 
+************************************************** (03/06/2025)
 
+* Historial y Caché de búsqueda
 
+* Con lo que tenemos ahora, cuando se refresca la pantalla del navegador
+* se pierden los datos, obviamente porque no tenemos los datos persistidos.
+* Vamos a crear una especie de caché para que se guarden las búsquedas
+* que realiza el usurio y los datos consultados
+
+* Lo queremos guardar algo así, búsquedas:
+{
+  'goku': [gif1,gif2,gif3],
+  'saitama': [gif1,gif2,gif3],
+  'dragon ball': [gif1,gif2,gif3],
+}
+
+* Esa estructura la guardamos en un tipo propio de TS, que se llama Record
+* Record<string, Gif[]>
+
+* En nuestro servicio GifService creamos un señal
+searchHistory = signal<Record<string,Gif[]>>({});
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
