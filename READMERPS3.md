@@ -428,7 +428,7 @@ https://api.giphy.com/v1/gifs/search?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&q=
     })
   }
 
-* Y en el search-page.component, inyectamos el servicio
+* Y en el search-page.component.ts, inyectamos el servicio
 * Y cuando de enter en la caja de búsqueda llamamos al método: searchGifs
 * del servicio con la llamada a la Api y al EndPoint search 
 
@@ -441,6 +441,139 @@ export default class SearchPageComponent {
     this.gifService.searchGifs(query);
   }
 }
+
+************************************************** (02/06/2025)
+
+* Mostrar resultados de la búsqueda
+
+* 1º En el search-page.component.ts
+* Inicializamos nuestro array de Gifs para la búsqueda
+
+export default class SearchPageComponent {
+  gifService = inject(GifService);
+  gifs = signal<Gif[]>([]); <<<------Inicializamos el array de Gifs para la búsqueda
+
+* 2º En el search-page.component.html, 
+* para mostrar los Gifs en el html: 
+
+<section class="py-5">
+  <gif-list [gifs]="[gifs()]"/> <<<-----Utilizamos el array de Gifs de la clase
+</section>
+
+??????????????????????????????????????????????????????????????????????
+
+* Cambiamos el método y quitamos el subscribe, 
+* Y si no hay nadie suscrito no se llama a la petición
+* Añadimos un return inicial y con esto lo que devolvemos es un Observable
+* Es un patrón que vamos a ver donde el servicio devuvel un Observable.
+
+searchGifs(query: string) {
+    // ... Con este return la función devuelve un Observable
+    return this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+        q: query,
+      }
+    });
+}
+
+* Ojo!!! esto nos devolvería: Un Observable<GiphyResponse>
+* (method) GifService.searchGifs(query: string): Observable<GiphyResponse>
+
+* Y ahora desde la clase del component search-page.component.ts
+* nos subscribimos 
+* Ojo!!! la respuesta de un Observable<GiphyResponse>
+* es un objeto GiphyResponse, pero nosotros no queremos eso,
+* queremos un array de Gifs
+
+export default class SearchPageComponent {
+  gifService = inject(GifService);
+  gifs = signal<Gif[]>([]);
+
+  onSearch(query:string) {
+    this.gifService.searchGifs(query).subscribe((resp)=> {
+      console.log(resp); <<<--- Ojo!!! la respuesta de un Observable<GiphyResponse> 
+      ...................<<<--- es un objeto GiphyResponse pero queremos un array de Gifs
+    })
+  }
+
+* Para solucionar el problema utilizaremos los operadores de rxjs
+* que se encadenan con el método: pipe
+* que permite encadenamientos especiales de los Observables
+* Importamos tap :import { tap } from 'rxjs';
+* que sirve para disparar efectos secundarios 
+
+  searchGifs(query: string) {
+    return this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+        q: query,
+      },
+    })
+    .pipe(
+      tap( resp => console.log({tap: resp}) )
+    );
+  }
+
+* Cuando el Obvservable emita la respuesta, esta pasará 
+* por todos los operadores rxjs. Ejemplo:
+
+  .pipe(
+    tap( resp => console.log({tap1: resp}) ),
+    tap( resp => console.log({tap2: resp}) ),
+    tap( resp => console.log({tap3: resp}) ),
+  );
+
+* Esto pasa por operador: tap1, tap2, tap3 y luego el Observable
+
+
+* El tap, no permite hacer transformaciones, permite hacer efectos secundarios
+* Para eso utilizamos el operador map, 
+* que permite hacer una transformación completamente diferente
+* Importamos map :import { map } from 'rxjs';
+
+* Por ejemplo: .pipe(map(resp => console.log('Hola mundo')));
+* que devolvería un Hola mundo en la consolta
+* Otro ejemplo: .pipe(map(resp => console.log(`Hola Mundo ${resp.data.length}`)));
+
+* 1º- En la primera transformación desestructuramos la {data} del objeto GiphyResponse
+* con esto lo que obtemos es: (parameter) data: GiphyItem[] ---> Un array de GiphyItem
+  .pipe(
+    map(({data}) => data),
+  );
+
+* 2º- Y ahora transformamos el array de tipo GiphyItem[] en array de tipo Gif[]
+* (method) GifMapper.mapGiphyItemsToGifArray(items: GiphyItem[]): Gif[]
+  .pipe(
+    map(({data}) => data),
+    map((items)  => GifMapper.mapGiphyItemsToGifArray(items)),
+  );
+
+* 3º- Incluso sería posible dejarlo en una sola línea
+  .pipe(
+    map(({data}) => GifMapper.mapGiphyItemsToGifArray(items)),
+  );
+
+* 4º- Establecemos en el array de la señal el array Gif[] de la respuesta
+export default class SearchPageComponent {
+  gifService = inject(GifService);
+  gifs = signal<Gif[]>([]);
+
+  onSearch(query:string) {
+    this.gifService.searchGifs(query).subscribe((resp)=> {
+      this.gifs.set(resp) <<<--- Establecemos la respuesta que es un array de Gif[]
+    })
+  }
+}
+
+* 5º- Asegurarse que en el html
+* obtenemos los datos de la señal
+<section class="py-5">
+  <gif-list [gifs]="[gifs()]"/>
+</section>
+
 
 
 

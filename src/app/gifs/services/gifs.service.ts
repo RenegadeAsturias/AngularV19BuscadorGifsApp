@@ -4,6 +4,7 @@ import { environment } from '@environments/environment';
 import type { GiphyResponse } from '../interfaces/giphy.interfaces';
 import { Gif } from '../interfaces/gif.interface';
 import { GifMapper } from '../mappers/gif.mapper';
+import { map, tap } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class GifService {
@@ -38,16 +39,19 @@ export class GifService {
   // https://api.giphy.com/v1/gifs/search?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&q=DragonBall&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
 
   searchGifs(query: string) {
-    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
+    return this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
       params: {
         api_key: environment.giphyApiKey,
         limit: 20,
         q: query,
-      }
-    }).subscribe((resp)=>{
-      const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
-      console.log({search: gifs});
+      },
     })
+    .pipe(
+      map(({data}) => data),
+      map((items)  => GifMapper.mapGiphyItemsToGifArray(items)),
+
+      // TODO: Historial
+    );
   }
 
 }
