@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '@environments/environment';
 import type { GiphyResponse } from '../interfaces/giphy.interfaces';
 import { Gif } from '../interfaces/gif.interface';
@@ -15,6 +15,7 @@ export class GifService {
   trendingGifsLoading = signal(true);
 
   searchHistory = signal<Record<string,Gif[]>>({});
+  searchHistoryKeys = computed(()=> Object.keys(this.searchHistory()));
 
   constructor() {
     this.loadTrendingGifs();
@@ -52,8 +53,19 @@ export class GifService {
       map(({data}) => data),
       map((items)  => GifMapper.mapGiphyItemsToGifArray(items)),
 
-      // TODO: Historial
+      // Historial
+      tab(items => {
+        this.searchHistory.update( history => ({ // Estoy construyendo un objeto implicito: Record<string,Gif[]>
+          ...history,
+          [query.toLowerCase()]: items,
+        }));
+      })
+
     );
   }
 
 }
+function tab(arg0: (items: any) => void): import("rxjs").OperatorFunction<Gif[], unknown> {
+  throw new Error('Function not implemented.');
+}
+

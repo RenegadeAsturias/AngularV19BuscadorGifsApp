@@ -596,6 +596,65 @@ export default class SearchPageComponent {
 * En nuestro servicio GifService creamos un señal
 searchHistory = signal<Record<string,Gif[]>>({});
 
+************************************************** (04/06/2025)
+
+* Para mostrar en el menú las keys de cada Record para mostrarlas en el menú,
+* utilizamos una señal computada, al ser una señal computada cada vez
+* que se actualice el 'searchHistory' con un nuevo valor 
+* se va a volver a computar nuestro objeto: searchHistoryKeys
+
+searchHistory = signal<Record<string,Gif[]>>({});
+searchHistoryKeys = computed(()=> Object.keys(this.searchHistory()));
+
+* Cada vez que busque un personaje y obtenga valores de la consulta
+* voy a necesitar un efecto secundario,
+* el operador de rxjs para efectos secundarios es: tap
+* en el mismo servicio, en la llamada a searchGifs añadimos:
+
+  // Historial
+  tab(items => {
+    this.searchHistory.update( history => ({ // <<<---Estoy construyendo un objeto implicito: Record<string,Gif[]>
+      ...history,
+      [query.toLowerCase()]: items,
+    }));
+  })
+
+* Vamos a actualizar el valor de una señal y lo hacemos con update
+* cuando depende de los valores que tenía previamente.
+* history => ({ <<<- Vamos a hacer un return implícito de un nuevo objeto
+* Con el spread del history: '...history' recuperamos el history que teníamos previamente
+* Y ahora vamos a poner una propiedad computada del objeto que va a ser igual que 'query'
+* que es el valor que entra como parámetro en la función + un toLowerCase()
+* y que "va a apuntar a los items que devuelve nuestra petición ':items'
+* Estoy construyendo un objeto implicito: Record<string,Gif[]>
+
+  searchGifs(query: string) {
+    return this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+        q: query,
+      },
+    })
+    .pipe(
+      map(({data}) => data),
+      map((items)  => GifMapper.mapGiphyItemsToGifArray(items)),
+      // Historial
+      tab(items => {
+        this.searchHistory.update( history => ({ // <<<---Estoy construyendo un objeto implicito: Record<string,Gif[]>
+          ...history,
+          [query.toLowerCase()]: items,
+        }));
+      })
+    );
+  }
+
+* Lo siguiente es utilizar este nuevo array searchHistory para mostrar en el menú
+* una nueva opción por cada una de las opciones del array, habrá que añadir otro @
+
+... continuar...
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 git add . 
