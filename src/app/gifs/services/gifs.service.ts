@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '@environments/environment';
-import type { GiphyResponse } from '../interfaces/giphy.interfaces';
+import { GiphyItem, GiphyResponse } from '../interfaces/giphy.interfaces';
 import { Gif } from '../interfaces/gif.interface';
 import { GifMapper } from '../mappers/gif.mapper';
 import { map, tap } from 'rxjs';
@@ -51,16 +51,13 @@ export class GifService {
     })
     .pipe(
       map(({data}) => data),
-      map((items)  => GifMapper.mapGiphyItemsToGifArray(items)),
-
-      // Historial
+      map((items) => GifMapper.mapGiphyItemsToGifArray(items)),
       tab(items => {
         this.searchHistory.update( history => ({ // Estoy construyendo un objeto implicito: Record<string,Gif[]>
           ...history,
           [query.toLowerCase()]: items,
         }));
       })
-
     );
   }
 

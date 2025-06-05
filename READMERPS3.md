@@ -706,7 +706,7 @@ export class GifsSideMenuOptionsComponent {
 * con las claves de las búsquedas.
 * Y utilizamos key como clave porque siempre va a ser único en el mapa.
 
-@for(item of gifService.searchHistoryKeys(); track key) {
+@for(key of gifService.searchHistoryKeys(); track key) {
     <a  [routerLink]="['/dashboard/search']" <<<-------- De momento dejamos esto (lo cambiaremos después)
         routerLinkActive="bg-blue-800" class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150">
       <div>
@@ -718,6 +718,17 @@ export class GifsSideMenuOptionsComponent {
       </div>
     </a>
 }
+
+************************************************** (06/06/2025)
+* Me ha surgido un error y tengo que seguir investigando como solucionarlo.
+* Argument of type 'unknown' is not assignable to parameter of type 'Gif[]'.ts
+* Parece que la respuesta no encaja con lo esperado Gif[]
+
+  onSearch(query:string) {
+    this.gifService.searchGifs(query).subscribe((resp)=> {
+      this.gifs.set(resp) <<<--- Argument of type 'unknown' is not assignable to parameter of type 'Gif[]'.ts
+    });
+  }
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
