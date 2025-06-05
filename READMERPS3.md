@@ -650,10 +650,74 @@ searchHistoryKeys = computed(()=> Object.keys(this.searchHistory()));
   }
 
 * Lo siguiente es utilizar este nuevo array searchHistory para mostrar en el menú
-* una nueva opción por cada una de las opciones del array, habrá que añadir otro @
+* una nueva opción por cada una de las opciones del array, habrá que añadir otro @for
 
-... continuar...
+************************************************** (05/06/2025)
 
+* En nuestra clase: gifs-side-menu-options.component.ts
+* tenemos definidas estas dos opciones de menú fijas
+
+export class GifsSideMenuOptionsComponent {
+  menuOptions:MenuOption[] = [
+    {
+      label: 'Trending',
+      subLabel: 'Gifs populares',
+      route: '/dashboard/trending',
+      icon: 'fa-solid fa-chart-line'
+    },
+    {
+      label: 'Buscador',
+      subLabel: 'Buscar gifs',
+      route: '/dashboard/search',
+      icon: 'fa-solid fa-magnifying-glass'
+    },
+  ]
+
+* Tareas
+* 1º-Inyectar el servicio:
+
+export class GifsSideMenuOptionsComponent {
+  gifService = inject(GifService); <<<---Inyectar el Servicio: GifService
+
+* 2º-Ir al html: gifs-side-menu-options.component.html
+* Donde teníamos un bucle para mostar el array estático de opciones:
+
+<div id="nav" class="w-full px-6">
+  @for (item of menuOptions; track item.route) {
+    <a  [routerLink]="item.route" 
+        routerLinkActive="bg-blue-800" class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150">
+      <div>
+        <i class="{{item.icon}}"></i>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-lg font-bold leading-5 text-white">{{item.label}}</span>
+        <span class="text-sm text-white/50 hidden md:block">{{item.subLabel}}</span>
+      </div>
+    </a>
+  }
+</div>
+
+* 3º- Accediendo al servicio podríamos obtener el historial tratado anteriormente:
+  searchHistory = signal<Record<string,Gif[]>>({});
+  searchHistoryKeys = computed(()=> Object.keys(this.searchHistory()));
+
+* 3º-Al final, crear otro bucle
+* recorremos la señal computada : gifService.searchHistoryKeys()
+* con las claves de las búsquedas.
+* Y utilizamos key como clave porque siempre va a ser único en el mapa.
+
+@for(item of gifService.searchHistoryKeys(); track key) {
+    <a  [routerLink]="['/dashboard/search']" <<<-------- De momento dejamos esto (lo cambiaremos después)
+        routerLinkActive="bg-blue-800" class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150">
+      <div>
+        <!-- <i class="{{item.icon}}"></i> -->
+        <i class="fa-solid fa-clock-rotate-left"></i> <<<-------Seleccionamos un icono
+      </div>
+      <div class="flex flex-col">
+        <span class="text-lg font-bold leading-5 text-white">{{key}}</span> <<<----------key
+      </div>
+    </a>
+}
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
