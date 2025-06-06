@@ -52,7 +52,7 @@ export class GifService {
     .pipe(
       map(({data}) => data),
       map((items) => GifMapper.mapGiphyItemsToGifArray(items)),
-      tab(items => {
+      tap(items => {
         this.searchHistory.update( history => ({ // Estoy construyendo un objeto implicito: Record<string,Gif[]>
           ...history,
           [query.toLowerCase()]: items,

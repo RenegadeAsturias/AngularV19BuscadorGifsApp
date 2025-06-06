@@ -612,7 +612,7 @@ searchHistoryKeys = computed(()=> Object.keys(this.searchHistory()));
 * en el mismo servicio, en la llamada a searchGifs añadimos:
 
   // Historial
-  tab(items => {
+  tap(items => {
     this.searchHistory.update( history => ({ // <<<---Estoy construyendo un objeto implicito: Record<string,Gif[]>
       ...history,
       [query.toLowerCase()]: items,
@@ -640,7 +640,7 @@ searchHistoryKeys = computed(()=> Object.keys(this.searchHistory()));
       map(({data}) => data),
       map((items)  => GifMapper.mapGiphyItemsToGifArray(items)),
       // Historial
-      tab(items => {
+      tap(items => {
         this.searchHistory.update( history => ({ // <<<---Estoy construyendo un objeto implicito: Record<string,Gif[]>
           ...history,
           [query.toLowerCase()]: items,
@@ -729,6 +729,19 @@ export class GifsSideMenuOptionsComponent {
       this.gifs.set(resp) <<<--- Argument of type 'unknown' is not assignable to parameter of type 'Gif[]'.ts
     });
   }
+
+* OK, ya lo he corregido, había un typo en el comando tap y no se estaba devolviendo correctamente un Gif[]
+
+  tap(items => {
+    this.searchHistory.update( history => ({ // Estoy construyendo un objeto implicito: Record<string,Gif[]>
+      ...history,
+      [query.toLowerCase()]: items,
+    }));
+  })
+
+
+
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
