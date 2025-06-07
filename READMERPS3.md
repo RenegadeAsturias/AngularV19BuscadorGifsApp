@@ -747,6 +747,7 @@ export class GifsSideMenuOptionsComponent {
 * por lo que queremos mostrar una nueva pantalla:
 
 * Crearemos una nueva página: pages/gif-history
+* ng g c gifs/pages/gif-history <<<--------------------CORRECTO!
 
 * cd src/app/gifs/pages
 $ ng g c gif-history
@@ -784,7 +785,7 @@ export const routes: Routes = [{
     <a  [routerLink]="['/dashboard/search']"
 
 * Hay dos formas de enviar el valor, utilizando la interpolación
-* [routerLink]="['/dashboard/history/${key}']"
+* [routerLink]="['/dashboard/history/${key}']"[]
 
 * O también, como lo que está entre corchetes es un array lo concatenamos así:
 @for(key of gifService.searchHistoryKeys(); track key) {
@@ -806,6 +807,9 @@ export const routes: Routes = [{
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+TECLAS RÁPIDAS / ABRIR RECURSO: Ctrl + P (se abrirá la barra de "Quick Open" (Apertura Rápida))
+TECLAS RÁPIDAS / BUSCAR RECURSO QUE CONTIENE TEXTO : Ctrl + Shift + F (para abrir la vista de búsqueda global en la barra lateral).
 
 git add . 
 git commit -m "Curso AngularV19BuscadorGifsApp" 
