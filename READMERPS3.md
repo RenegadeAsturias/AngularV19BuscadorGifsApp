@@ -739,6 +739,68 @@ export class GifsSideMenuOptionsComponent {
     }));
   })
 
+************************************************** (07/06/2025)
+
+* Argumentos dinámicos por URL
+* Queremos que cuando haga clic en los enlaces de las búsquedas SearchHistory
+* El resultado se cargue debajo del buscador de ayuda en la parte central de la página
+* por lo que queremos mostrar una nueva pantalla:
+
+* Crearemos una nueva página: pages/gif-history
+
+* cd src/app/gifs/pages
+$ ng g c gif-history
+CREATE src/app/gifs/pages/gif-history/gif-history.component.html (27 bytes)
+CREATE src/app/gifs/pages/gif-history/gif-history.component.ts (244 bytes)     
+
+* Y en: app.routes.ts, creamos una nueva ruta, 
+* que con el loadComponent se cargará de manera perezosa
+
+export const routes: Routes = [{
+  path: 'dashboard',
+  loadComponent: ()=>import('./gifs/pages/dashboard-page/dashboard-page.component'),
+  children: [
+    ... ... ... ... ... ...
+    {
+      path: 'history',
+      loadComponent: ()=>import('./gifs/pages/gif-history/gif-history.component')
+    },
+
+* Dependiendo de el key de la búsqueda que tiene la opción de menú que lo muestra
+* tendríamos que mostrar un resultado diferente
+* para recibir argumentos dinámicos a través de la url pondremos
+* tantos argumentos /:argumento1/:argumento1... como necesitemos
+* Entoneces, por ejemplo, pondríamos query en represención del key de búsqueda seleccionado
+    {
+      path: 'history/:query',
+      loadComponent: ()=>import('./gifs/pages/gif-history/gif-history.component')
+    },
+
+* Ahora tenemos que ajustar también los enlaces del html donde mostramos
+* las opciones de menú dinámicas para que nos manden ese parámetro:
+* y que anteriormente dejamos así:
+
+@for(key of gifService.searchHistoryKeys(); track key) {
+    <a  [routerLink]="['/dashboard/search']"
+
+* Hay dos formas de enviar el valor, utilizando la interpolación
+* [routerLink]="['/dashboard/history/${key}']"
+
+* O también, como lo que está entre corchetes es un array lo concatenamos así:
+@for(key of gifService.searchHistoryKeys(); track key) {
+    <a  [routerLink]="['/dashboard/history',key]" <<<--- añade en el array
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
