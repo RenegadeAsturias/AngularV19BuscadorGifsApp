@@ -792,13 +792,34 @@ export const routes: Routes = [{
     <a  [routerLink]="['/dashboard/history',key]" <<<--- añade en el array
 
 
+************************************************** (07/06/2025)
 
+Hemos completado que cuando hace una búsqueda la key de la búsqueda
+se añade al menú en un listado de búsquedas
+Y que ahora ya enviamos dinámicamente el key en la url
 
+http://localhost:4200/dashboard/history/goku
+http://localhost:4200/dashboard/history/saitama
+http://localhost:4200/dashboard/history/oliver%20y%20benji
 
+Ahora tenemos que pintar el resultado de la búsqueda de gifs.
 
+1º En la clase
+export default class GifHistoryPageComponent {
+}
 
+2º Inyectamos la ruta activa, inicialmente podría ser así:
+* rutaActiva = inject(ActivatedRoute)
 
+3º Si continuamos la expresión para obtener los parámetros, 
+vemos que así tendríamos una respuesta con un Observable<Params>
+* (property) ActivatedRoute.params: Observable<Params>
+* query = inject(ActivatedRoute).params
 
+4º Nos subscribimos para tratarlos y de momentos solo los imprimimos
+query = inject(ActivatedRoute).params.subscribe((params) => {
+  console.log({params});
+});
 
 
 
