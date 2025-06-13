@@ -792,7 +792,7 @@ export const routes: Routes = [{
     <a  [routerLink]="['/dashboard/history',key]" <<<--- añade en el array
 
 
-************************************************** (07/06/2025)
+************************************************** (13/06/2025)-(14/06/2025)
 
 Hemos completado que cuando hace una búsqueda la key de la búsqueda
 se añade al menú en un listado de búsquedas
@@ -822,6 +822,52 @@ query = inject(ActivatedRoute).params.subscribe((params) => {
 });
 
 
+5º Para recojer el único parámetro en el que estamos esperando en path
+que definimos así: path: 'history/:query',
+{
+  path: 'history/:query',
+  loadComponent: ()=>import('./gifs/pages/gif-history/gif-history.component')
+},
+
+* Buscamos el parámetro 'query'
+console.log(params['query']);
+
+6º Para simplifir todo esto, para ello vamos a utilizar la función: toSignal
+que transforma un Observable en una señal
+query = toSignal(
+  inject(ActivatedRoute).params  <<<- Con esto devolvemos un objeto con todos los parámetros
+);
+
+7º Como: inject(ActivatedRoute).params es un Observable, tendrá el método pipe para filtrar
+
+  * En Angular, la función toSignal se usa para convertir un observable en una señal (Signal) reactiva,
+  * parte de las nuevas APIs reactivas introducidas con Angular 16 en adelante.
+  * A partir de Angular 16, puedes importarla directamente desde @angular/core:
+  * import { toSignal } from '@angular/core/rxjs-interop';
+  * (alias) toSignal<Params>(source: Observable<Params> | Subscribable<Params>): Signal<Params | undefined>
+
+  query = toSignal(
+    inject(ActivatedRoute).params.pipe(
+      map((params) => params['query'])
+    )
+  );
+
+  *¿Qué hace paso a paso?
+  inject(ActivatedRoute):
+  *Usa la API de inyección sin constructor para obtener el servicio ActivatedRoute, que proporciona información sobre la ruta actual.
+
+  .params.pipe(map(...)):
+  * params es un observable que emite cada vez que cambian los parámetros de la ruta.
+  * El map extrae el valor del parámetro query, es decir, algo como ?query=valor.
+
+  * toSignal(...):
+  * Convierte ese observable en una señal (Signal).
+  * Esto permite que query() (al ser una señal) se use directamente en la plantilla y se reactive automáticamente si el parámetro query cambia.  
+
+8º Si añadimos en la plantilla una llamada a la señal que obtiene nuestro parámetro dinámico de la url
+* Cada vez que hagamos clic sobre una opción de menú invocará la url y extraerá el parámetro y se pintará:
+<p>gif-history works!</p>
+<p>{{query()}}</p>
 
 
 
