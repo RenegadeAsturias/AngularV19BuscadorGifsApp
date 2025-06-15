@@ -917,7 +917,21 @@ export default class GifHistoryPageComponent {
   gifsByKey = computed(() => this.gifService.getHistoryGifs(this.query()));  <<<---Tercero, simplificando con una sola línea.
 
 
+************************************************** (16/06/2025)
+* Recomponemos la plantilla para mostrar los resultados
+* vamos a reutilizar el componente que mostraba un listado de Gifs
+* Tendremos que importar el componente para poder utilizarlo, en gif-history.component.ts añadimos:
+* import { GifListComponent } from "../../components/gif-list/gif-list.component";
+* @Component({
+*  selector: 'app-gif-history-page',
+*  imports: [GifListComponent],  <<<---Importamos el componente
 
+
+<h3 class="text-2xl font-bold">Mostrando: {{query()}}</h3>
+
+<section class="py-5">
+  <gif-list [gifs]="gifsByKey()"/>
+</section>
 
 
 
