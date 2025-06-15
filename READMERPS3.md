@@ -792,7 +792,7 @@ export const routes: Routes = [{
     <a  [routerLink]="['/dashboard/history',key]" <<<--- añade en el array
 
 
-************************************************** (13/06/2025)-(14/06/2025)
+************************************************** (13/06/2025)
 
 Hemos completado que cuando hace una búsqueda la key de la búsqueda
 se añade al menú en un listado de búsquedas
@@ -870,12 +870,61 @@ query = toSignal(
 <p>{{query()}}</p>
 
 
+************************************************** (15/06/2025)
+* Mostrar historial de búsqueda
+* Cuando hacemos clic sobre una de las opciones de menú
+* lo que tenemos que hacer es con el key de la opción seleccionada
+* recuperar y mostrar los resultados previamente recuperados y almancenados
+
+9º En nuestro GifService tenemos que crearnos algún método que enviando el key seleccionado
+* recupere el correspondiente de nuestros resultados guardaos
+searchHistory = signal<Record<string,Gif[]>>({});
+
+getHistoryGifs(query: string):Gif[] {
+  return this.searchHistory()[query] ?? [];
+}
+
+10º Vamos a implentar toda la lógica que necesitamos, anteriormente teníamos:
+export default class GifHistoryPageComponent {
+  query = toSignal(
+    inject(ActivatedRoute).params.pipe(
+      map((params) => params['query'])
+    )
+  );
+
+11º Implementamos lo todo:
+export default class GifHistoryPageComponent {
+
+  gifService = inject(GifService); <<<---Primer inyectar el Servicio
+
+  query = toSignal(
+    inject(ActivatedRoute).params.pipe(
+      map((params) => params['query'])
+    )
+  );
+
+  /** Lo podríamos hacer así, con el return
+  gifsByKey = computed(() => {
+    return this.gifService.getHistoryGifs(this.query()) <<<---Segundo, utilizando sintaxis con return
+  }); */
+
+  /** O como es una lína sola, se pude simplificar en una sola línea
+  *   en la variable query tenemos el key que hemos recogido de la Ruta Activa
+  *   ese parámetro era dinámico y lo extraemos de la URL,
+  *   aquí hacemos una señal computada de forma que si el key cambia
+  *   porque otra opción de menú ha sido seleccionada también cambiará
+  *   el valor de nuestro resultado de Gif[] obtenido por: gifsByKey */
+  gifsByKey = computed(() => this.gifService.getHistoryGifs(this.query()));  <<<---Tercero, simplificando con una sola línea.
+
+
+
 
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 TECLAS RÁPIDAS / ABRIR RECURSO: Ctrl + P (se abrirá la barra de "Quick Open" (Apertura Rápida))
+TECLAS RÁPIDAS / QUICK FIX: Ctrol + . (por ejemplo importar)
 TECLAS RÁPIDAS / BUSCAR RECURSO QUE CONTIENE TEXTO : Ctrl + Shift + F (para abrir la vista de búsqueda global en la barra lateral).
 
 git add . 

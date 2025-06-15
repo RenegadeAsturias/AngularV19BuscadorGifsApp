@@ -4,7 +4,7 @@ import { environment } from '@environments/environment';
 import { GiphyItem, GiphyResponse } from '../interfaces/giphy.interfaces';
 import { Gif } from '../interfaces/gif.interface';
 import { GifMapper } from '../mappers/gif.mapper';
-import { map, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class GifService {
@@ -41,7 +41,7 @@ export class GifService {
   // Ejemplo de llamada PHYURL
   // https://api.giphy.com/v1/gifs/search?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&q=DragonBall&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
 
-  searchGifs(query: string) {
+  searchGifs(query: string):Observable<Gif[]> {
     return this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/search`, {
       params: {
         api_key: environment.giphyApiKey,
@@ -61,8 +61,14 @@ export class GifService {
     );
   }
 
+  getHistoryGifs(query: string):Gif[] {
+    return this.searchHistory()[query] ?? [];
+  }
+
 }
+
+/**
 function tab(arg0: (items: any) => void): import("rxjs").OperatorFunction<Gif[], unknown> {
   throw new Error('Function not implemented.');
-}
+} */
 
