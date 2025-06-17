@@ -933,6 +933,39 @@ export default class GifHistoryPageComponent {
   <gif-list [gifs]="gifsByKey()"/>
 </section>
 
+************************************************** (17/06/2025)
+* LocalStorage - Mantener el historial
+* Si recargamos el navegador se pierde el historial porque todo estaba en memoria.
+* Queremos guardar la información en el LocalStorage en particular hay que guardar: 
+* searchHistory = signal<Record<string,Gif[]>>({});
+* Y recordamos en el LocalStorage solo podemos guardar strings
+
+1º Añadimos en el Servicio un effect que va a dispararse
+* cada vez que que nuestro searchHistory cambie.
+* Al añadir al efecto una señal cuando esta cambia se lanza el efecto
+
+const GIF_KEY = 'gifs'; <<<---Creamos una constante para no poner a fuego 'gifs' en el código
+
+saveGifsToLocalStorage = effect(() => {
+  const historyString = JSON.stringify(this.searchHistory());
+  localStorage.setItem('gifs',historyString);
+});
+
+2º Ahora creamos una función para recoger los valores que guardamos
+* en el localStorage con el key 'gifs'
+
+const loadFromLocalStorage = () => { 
+  const gifsFromLocalStorage = localStorage.getItem(GIF_KEY) ?? '{}'; <<<---Tratamos de recoger el objeto guardado Record<string, gifs[]> y si no hay nada devolvemos un objeto vacío
+  const gifs = JSON.parse(gifsFromLocalStorage); <<<---Parseamos el objeto recuperado
+  return gifs;
+}
+
+3º En nuestra señal de búsquedas guardadas la inicialización estaba así:
+*  searchHistory = signal<Record<string,Gif[]>>({});
+*  Y ahora la cambiamos para que lo recoja del localStorage:
+
+searchHistory = signal<Record<string,Gif[]>>(loadFromLocalStorage());
+
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
