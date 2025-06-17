@@ -967,6 +967,26 @@ const loadFromLocalStorage = () => {
 searchHistory = signal<Record<string,Gif[]>>(loadFromLocalStorage());
 
 
+************************************************** (18/06/2025)
+* Sección 8 - InfiniteScroll - DevTools - Masonry
+* Preservar estado del scroll
+* Hacer scroll infinito
+* Diseño masonry
+* Técnicas y herramientas para depurar
+
+* Continuación de la aplicación de Gifs
+* Diseño masonry
+* Vamos a la página: https://flowbite.com/docs/components/gallery/#masonry-grid
+* Y copiamos el formato: Masonry grid 
+* Tendremos que hacer agrupaciones de 3 en 3
+* De momento copaiamos el código y lo pegamos en : trending-page.component.html
+* (compentamos lo que hay y pegamos lo que tenemos)
+
+
+
+
+
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
