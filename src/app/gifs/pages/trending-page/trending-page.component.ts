@@ -21,7 +21,7 @@ const imageUrls: string[] = [
 
 @Component({
   selector: 'app-trending-page',
-  imports: [GifListComponent],
+  imports: [],
   templateUrl: './trending-page.component.html',
 })
 export default class TrendingPageComponent {

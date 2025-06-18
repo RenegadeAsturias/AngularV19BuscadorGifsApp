@@ -983,8 +983,75 @@ searchHistory = signal<Record<string,Gif[]>>(loadFromLocalStorage());
 * (compentamos lo que hay y pegamos lo que tenemos)
 
 
+************************************************** (18/06/2025)
+* Para pintar los Gifs, tenemos que agruparlos de 3 en 3
+* Actualmente en nuestro servicio tenemos un Array de Gifs 
+* trendingGifs = signal<Gif[]>([]); // [gif,gif,gif,gif,gif,gif,gif,gif,gif,gif]
 
+* Y lo que tenemos que necesitamos montar tendría este aspecto:
+* [ [gif,gif,gif],[gif,gif,gif],[gif,gif,gif] ]
 
+* Creamos una nueva propiedad computada:
+trendingGifGroup = computed<Gif[][]>(() => {
+  const groups = [];
+  for(let i=0; i<this.trendigGifs().length; i+=3) { // Recorro los elementos de 3 en 3
+    console.log(this.trendingGifs().slice(i,i+3));
+    groups.push(this.trendingGifs().slice(i,i+3));
+  }
+  console.log(groups);
+  return groups;
+});
+
+* Nuestro array completo de 20 posiciones tiene este formato:
+​
+gifs: Array(20) [ {…}, {…}, {…}, … ]
+​​0: Object { id: "aHL9U7uOsUepqFdQOW", title: "Stanley Cup Sport GIF by Sealed With A GIF", url: "https://media0.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/aHL9U7uOsUepqFdQOW/giphy.gif" }
+​​1: Object { id: "l0Ex8iNKgyFqml356", title: "Sleepy Good Night GIF", url: "https://media3.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/l0Ex8iNKgyFqml356/giphy.gif" }
+​​2: Object { id: "ayPDNL3unkmXrbnCGB", title: "Work What GIF by Abitan", url: "https://media4.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/ayPDNL3unkmXrbnCGB/giphy.gif" }
+​​3: Object { id: "xT39CXg70nNS0MFNLy", title: "I Love You Hug GIF", url: "https://media3.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/xT39CXg70nNS0MFNLy/giphy.gif" }
+​​4: Object { id: "Ok4HaWlYrewuY", title: "animal fail GIF", url: "https://media4.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/Ok4HaWlYrewuY/giphy.gif" }
+​​
+length: 20
+​​
+* Y ahora con nuestro slice guardamos en el array objetos con formato: Array(3) [ {…}, {…}, {…} ]
+* console.log(this.trendingGifs().slice(i,i+3));
+* groups.push(this.trendingGifs().slice(i,i+3));
+
+Array(3) [ {…}, {…}, {…} ]
+0: Object { id: "aHL9U7uOsUepqFdQOW", title: "Stanley Cup Sport GIF by Sealed With A GIF", url: "https://media0.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/aHL9U7uOsUepqFdQOW/giphy.gif" }
+1: Object { id: "l0Ex8iNKgyFqml356", title: "Sleepy Good Night GIF", url: "https://media3.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/l0Ex8iNKgyFqml356/giphy.gif" }
+2: Object { id: "ayPDNL3unkmXrbnCGB", title: "Work What GIF by Abitan", url: "https://media4.giphy.com/media/v1.Y2lkPThiNzllMWZkbHFtZGNpbGh0cDV6N3NncHJ4bjBpZ3psd2htczBmcXRxZW1ia2I2NSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/ayPDNL3unkmXrbnCGB/giphy.gif" }
+length: 3
+
+* Ahora tenemos que convertir la estructura estática que copiamos en fuego en página:
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5">
+    <div class="grid gap-4">
+        <div>
+            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg" alt="">
+        </div>
+        <div>
+            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg" alt="">
+        </div>
+        <div>
+            <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg" alt="">
+        </div>
+    </div>
+
+* Recorremos el array de la señal, extraemos cada grupo y de cada grupo recorremos sus 3 señales
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5">
+  @for (group of gifService.trendingGifGroup(); track $index) {
+    <div class="grid gap-4">
+      @for (gif of group; track gif.id) {
+        <div>
+          <img  class="h-full w-full rounded-lg object-cover"
+                [src]="gif.url"
+                [alt]="gif.title"
+            />
+        </div>
+      }
+    </div>
+  }
+</div>
 
 
 
