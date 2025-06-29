@@ -1053,6 +1053,43 @@ length: 3
   }
 </div>
 
+************************************************** (29/06/2025)
+* viewChild - Tomar referencias del template
+
+* Partimos de nuestro código en: trending-page.component.html
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5">
+  @for (group of gifService.trendingGifGroup(); track $index) {
+    <div class="grid gap-4">
+      @for (gif of group; track gif.id) {
+        <div>
+          <img  class="h-full w-full rounded-lg object-cover"
+                [src]="gif.url"
+                [alt]="gif.title"
+            />
+        </div>
+      }
+    </div>
+  }
+</div>
+
+* Vamos a hacer unos cambios en el código anterior,
+* la idea es guardar la referencia de alguna forma de en qué lugar
+* del scroll estamos navegando.
+* De momento vamos a escuchar el evento scroll y vamos a mandarlo
+* a una función onScroll enviándole el event, que aún no tenemos definida:
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5"
+  (onScroll)="onScroll($event)"
+>
+
+* Definimos la funcion onScroll en la clase correspondiente: trending-page.component.ts
+onScroll(event: Event) {
+  console.log(event);
+}
+
+
+
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
