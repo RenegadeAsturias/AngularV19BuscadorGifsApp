@@ -1053,7 +1053,7 @@ length: 3
   }
 </div>
 
-************************************************** (29/06/2025)
+************************************************** (30/06/2025)
 * viewChild - Tomar referencias del template
 
 * Partimos de nuestro código en: trending-page.component.html
@@ -1087,6 +1087,66 @@ length: 3
 onScroll(event: Event) {
   console.log(event);
 }
+
+* Con estos cambios, vemos que el evento scroll no está enviando nada al log
+* y es porque es scroll que vemos no es del elemento div, es el de la pantalla
+* tenemos que hacer unos cambios sobre el estilo del div para que se aprecie
+* claramente el scroll del div y así capture el evento.
+* El contenido del div se estaba desbordando con estos cambios se contendrá
+* el contenido que sobresale en el eje y del scroll.
+* class="h-screen overflow-y-scroll, se quedaría así:
+
+<div class="h-screen overflow-y-scroll grid grid-cols-2 md:grid-cols-4 gap-4 pt-5"
+  (onScroll)="onScroll($event)"
+>
+
+* Explica que también ha otra forma de hacerlo más fácil
+* que abordar explorar el objeto del evento para explorar sus propiedades
+* utilizando una referencia local al html: #groupDiv
+* lo llamamos así pero podríamos darle cualquier nombre
+
+<div class="h-screen overflow-y-scroll grid grid-cols-2 md:grid-cols-4 gap-4 pt-5"
+  (onScroll)="onScroll($event)"
+   #groupDiv
+>
+
+* Ahora vamos a utilizar esta referencia en la plantilla
+* lo vamos a llamar: scrollDivRef haciendo en el nombre
+* referencia a que es un elemento de html de la plantilla
+* pero que podríamos utilizar cualquier nombre:
+
+* Explica que hay dos tiempos de elementos que nos salen como opciones
+* para tomar referncias al hmtl de la plantilla
+* 1- viewChild - Es para cuando en la plantilla tenemos un solo elemento (Es un elemento indepediente)
+* (Ojo! que si tuviesemos más de un elemento nos devolvería el primero que encuentre)
+* scrollDivRef = viewChild
+* 2- viewChildren - Es para cuando en la plantilla tenemos varios elementos (Es un arreglo)
+* scrollDivRef = viewChildren
+
+* Entonces se quedaría asi, con viewChild('groupDiv') y le asignamos el tipo: ElementRef
+* (Ojo! que scrollDivRef es una señal)
+  scrollDivRef = viewChild<ElementRef>('groupDiv')
+
+* Ahora la manejamos en el evento scroll 
+* Teniendo en cuenta que:
+* 1-ponemos this.scrollDivRev() con paréntesis porque es una señal
+* 2-cuendo ponemos la ? hacia la referencia es porque 
+* el elemento puede no haberse construido aún y por tanto no obtendremos referencia
+* 3-Y que nativeElement es el elemento html
+* const scrollDiv = this.scrollDivRef()?.nativeElement;
+* Se quedaría así:
+
+  scrollDivRef = viewChild<ElementRef>('groupDiv');
+  onScroll(event: Event) {
+    const scrollDiv = this.scrollDivRef()?.nativeElement;
+    console.log(scrollDiv);
+  }
+
+
+
+
+
+
 
 
 
