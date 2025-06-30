@@ -28,10 +28,21 @@ export default class TrendingPageComponent {
   // gifs = imageUrls; *Dejamos de utilizar el array de Gifs a fuego que implementamos al principio
   gifService = inject(GifService)
 
-  scrollDivRef = viewChild<ElementRef>('groupDiv');
+  scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('groupDiv');
   onScroll(event: Event) {
     const scrollDiv = this.scrollDivRef()?.nativeElement;
-    console.log(scrollDiv);
+    // console.log(scrollDiv);
+    if(!scrollDiv) return;
+    const scrollTop = scrollDiv.scrollTop;
+    const clientHeight = scrollDiv.clientHeight;
+    const scrollHeight = scrollDiv.scrollHeight;
+    const isAtBottom = scrollTop + clientHeight + 300 >= scrollHeight;
+    console.log({isAtBottom, scrollTotal: scrollTop+clientHeight, scrollTop, clientHeight, scrollHeight});
+
+    if(isAtBottom) {
+      // TODO: cargar la siguiente página de gifs
+    }
+
   }
 
 }

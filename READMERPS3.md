@@ -1142,6 +1142,57 @@ onScroll(event: Event) {
     console.log(scrollDiv);
   }
 
+************************************************** (31/06/2025)
+* Determinar fin de scroll
+
+* Revisamos que con lo que teníamos anteriorment
+* nos estaba saliendo como tipo Any así que ajustamos el tipado más estricto
+scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('groupDiv');
+
+* Vamos a partir de los siguientes datos:
+* El elemento que ve el usuario en pantalla se le llama Viewpoint
+* Aproximadamente el área que ve el usuario es de 600px
+* Y cuando baja hasta los 1200px se piden más datos
+* mientras está bajando el scroll la propiedad que lo indica es scrollHeight
+* verificamos si hay scrollDiv para que si ya no hay no evaluar la expresión
+* if(!scrollDiv) return;
+
+* Tomamos las variables que necesitaremos
+* 1-Posición del scrollActual en pixels desde la parte de arriba
+const scrollTop = scrollDiv.scrollTop;
+* 2-Cuánto espacio en la pantalla tiene (Corresponde con Viewpoint, se muestra en el navegador)
+const clientHeight = scrollDiv.clientHeight;
+* 3-Ahora obtenemos el valor máximo del scroll
+const scrollHeight = scrollDiv.scrollHeight;
+* Para mostrarlo
+console.log({scrollTop, clientHeight, scrollHeight});
+* 4-Cuando el scrollTop + clientHeight se acerca mucho al scrollHeight
+* tenemos que hacer una llamada para pedir más datos
+* porque estamos llegando al final, lo registraremos en una variable:
+const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+* La idea no es esperar a llegar al final sino que de la sensación
+* de scroll infinito para ajustarlo, será cuando se acerque al final así que ponemos
+* unos pixels de gracia (ej:300px) para que se acerque, quedaría así:
+ const isAtBottom = scrollTop + clientHeight + 300 >= scrollHeight;
+* Para mostrarlo:
+console.log({isAtBottom, scrollTotal: scrollTop+clientHeight, scrollTop, clientHeight, scrollHeight});
+
+* Ejemplos de trazas haciendo scroll:
+Object { isAtBottom: false, scrollTotal: 2884, scrollTop: 2183, clientHeight: 701, scrollHeight: 3294 }
+Object { isAtBottom: false, scrollTotal: 2931, scrollTop: 2230, clientHeight: 701, scrollHeight: 3294 }
+Object { isAtBottom: true, scrollTotal: 3017, scrollTop: 2316, clientHeight: 701, scrollHeight: 3294 }
+Object { isAtBottom: true, scrollTotal: 3074, scrollTop: 2373, clientHeight: 701, scrollHeight: 3294 }
+
+En la siguient clase, abordaremos cargar la siguiente página de Gifs
+cuando nos aproximemos al final:
+if(isAtBottom) {
+// TODO: cargar la siguiente página de gifs
+}
+
+
+
+
+
 
 
 
