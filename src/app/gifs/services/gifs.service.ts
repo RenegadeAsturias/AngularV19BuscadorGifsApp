@@ -20,7 +20,9 @@ export class GifService {
   private http = inject(HttpClient)
 
   trendingGifs = signal<Gif[]>([]);
-  trendingGifsLoading = signal(true);
+  trendingGifsLoading = signal(false);
+  private trendingPage = signal(0); // Añadimos esta señal para controlar el offset
+
 
   trendingGifGroup = computed<Gif[][]>(() => {
     const groups = [];
@@ -48,17 +50,30 @@ export class GifService {
   // https://api.giphy.com/v1/gifs/trending?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&limit=25&offset=0&rating=g&bundle=messaging_non_clips
 
   loadTrendingGifs() {
+
+    // Queremos peticiones de una a una, no que nos bombardeen con peticiones
+    if(this.trendingGifsLoading()) return; // Añadimos una condición para chequear que no está cargando
+
+    this.trendingGifsLoading.set(true); // Establecemos el valor a true a la señal para que de momento no entren más peticiones
+
     this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
       params: {
         api_key: environment.giphyApiKey,
         limit: 20,
+        offset: this.trendingPage() * 20, // Añadimos el cálculo del offset basado en el valor de la señal
       },
     }).subscribe((resp)=>{
       const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
-      this.trendingGifs.set(gifs);
+      this.trendingGifs.update(currentGifs => [
+        ...currentGifs, // Añadimos al array los gifs que acabamos de leer
+        ...gifs, // Y los añadimos a los que ya habíamos leído
+      ]);
+      // Actualizamos la página leída con +1, sino me mostraría siempre los mismos Gifs
+      this.trendingPage.update(currentPage => currentPage+1);
       this.trendingGifsLoading = signal(false);
       console.log({gifs});
     });
+
   }
 
   // Ejemplo de llamada PHYURL

@@ -40,7 +40,8 @@ export default class TrendingPageComponent {
     console.log({isAtBottom, scrollTotal: scrollTop+clientHeight, scrollTop, clientHeight, scrollHeight});
 
     if(isAtBottom) {
-      // TODO: cargar la siguiente página de gifs
+      // Cargar la siguiente página de gifs al acercarse al final de la página
+      this.gifService.loadTrendingGifs();
     }
 
   }

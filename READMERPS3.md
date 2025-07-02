@@ -1186,20 +1186,115 @@ Object { isAtBottom: true, scrollTotal: 3074, scrollTop: 2373, clientHeight: 701
 En la siguient clase, abordaremos cargar la siguiente página de Gifs
 cuando nos aproximemos al final:
 if(isAtBottom) {
-// TODO: cargar la siguiente página de gifs
+  // TODO: cargar la siguiente página de gifs
 }
 
+************************************************** (01/07/2025)
+* Explicación en la primera llamada en la url estamos enviando los siguientes parámetros
+* primera llamada = limit=20 tráeme 20 registros y offset=0 empieza por el registro cero
+* segunda llamada = limit=20 tráeme 20 registros y offset=20 empieza por el registro veinte (salta los primeros 20)
+* Una forma de calcular el offset también puede ser
+* offset primera página: 0*20 -> offset segunda página: 1*20 -> offset tercera página: 2*20 -> offset cuarta página: 3*20
+
+* Implementamos la solución en el servicio:
+
+@Injectable({providedIn: 'root'})
+export class GifService {
+
+  private http = inject(HttpClient)
+
+  trendingGifs = signal<Gif[]>([]);
+  trendingGifsLoading = signal(false); <<<----Y cambiamos esto a false
+  private trendingPage = signal(0);    <<<----Añadimos esta señal para controlar el offset
+
+* buscamos la función de carga que tenemos como:
+
+  // Ejemplo de llamada PHYURL
+  // https://api.giphy.com/v1/gifs/trending?api_key=AwurkMOOhmwe2wSNIQLSkqeAV9bILeNP&limit=25&offset=0&rating=g&bundle=messaging_non_clips
+
+  loadTrendingGifs() {
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
+      params: {
+        api_key: environment.giphyApiKey,
+        limit: 20,
+      },
+    }).subscribe((resp)=>{
+      const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+      this.trendingGifs.set(gifs);
+      this.trendingGifsLoading = signal(false);
+      console.log({gifs});
+    });
+  }
+
+*  Y ahora hacemos los siguientes cambios:
+
+  loadTrendingGifs() {
+
+    // Queremos peticiones de una a una, no que nos bombardeen con peticiones
+    if(this.trendingGifsLoading()) return; <<<---Añadimos una condición para chequear que no está cargando
+
+    this.trendingGifsLoading.set(true); <<<---Establecemos el valor a true a la señal para que de momento no entren más peticiones
+
+    this.http.get<GiphyResponse>(`${environment.giphyUrl}/gifs/trending`, {
+        params: {
+          api_key: environment.giphyApiKey,
+          limit: 20,
+          offset: this.trendingPage() * 20, <<<---Añadimos el cálculo del offset basado en el valor de la señal
+        },
+      }).subscribe((resp)=>{
+        const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+        this.trendingGifs.set(gifs);
+        this.trendingGifsLoading = signal(false); <<<---Ya teníamos contemplado reestablecer el valor de la señal para que admita más peticiones
+        console.log({gifs});
+      });
+    }
+
+  }
+
+* Continuamos con los cambios, antes sobreescribimos los gifs con el valor de la señal:
+* this.trendingGifs.set(gifs);
+
+  }).subscribe((resp)=>{
+    const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+    this.trendingGifs.set(gifs);
+    this.trendingGifsLoading = signal(false); <<<---Ya teníamos contemplado reestablecer el valor de la señal para que admita más peticiones
+    console.log({gifs});
+  });
+
+* No queremos sobreescribir los gifs, queremos añadir a la señal los gifs anteriores más los nuevos leídos
+* const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data); <<<---Estos son los gifs que ya habíamos leído
+* this.trendingGifs.update( currentGifs => [
+    ...currentGifs, <<<----Añadimos al array los gifs que acabamos de leer
+    ...gifs, <<<----Y los añadimos a los que ya habíamos leído
+  ]);
+* También nos falta actualizar la página actual con uno más porque sino me traería siempre los mismos resultados:
+  this.trendingPage.update(currentPage = > currentPage+1);
+
+* Quedaría así: 
+  }).subscribe((resp)=>{
+    const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
+    this.trendingGifs.update(currentGifs => [
+      ...currentGifs, // Añadimos al array los gifs que acabamos de leer
+      ...gifs, // Y los añadimos a los que ya habíamos leído
+    ]);
+    this.trendingPage.update(currentPage = > currentPage+1);
+    this.trendingGifsLoading = signal(false);
+    console.log({gifs});
+  });
+
+* Ahora nos faltaría disparar la llamada cuando llegamos al final que habíamos dejado pendiente:
+  if(isAtBottom) {
+    // TODO: cargar la siguiente página de gifs
+    this.gifService.loadTrendingGifs();
+  }
 
 
+* Cuando estamos haciendo scroll y nos cambiamos de opción de menú, la página se destruye
+* y perdemos la referencia en el scroll del Gif que estábamos visualizando
+* De tal forma que cuando volvamos a la página volvemos al principio.
 
 
-
-
-
-
-
-
-
+.... continuar...
 
 
 
