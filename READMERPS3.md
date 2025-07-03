@@ -1294,7 +1294,29 @@ export class GifService {
 * De tal forma que cuando volvamos a la página volvemos al principio.
 
 
-.... continuar...
+************************************************** (03/07/2025)
+* Preservar la posición del scroll
+* Para guardar la posición del scrollTop que contiene la situación del scroll
+* pensamos dónde deberíamos guardar esa información que no sea en el localstorage
+* de forma que se preserve mientras navegamos por la aplicación
+* Vamos a guardarlo en un servicio:
+* Creamos a partir de la carpeta app:
+* /shared/services/scroll-state.service.ts
+
+@Injectable({providedIn: 'root'})
+export class ScrollStateService {
+
+* Y ahora guardamos el estado en una señal:
+
+
+
+
+
+
+
+
+
+
 
 
 
