@@ -1306,14 +1306,54 @@ export class GifService {
 @Injectable({providedIn: 'root'})
 export class ScrollStateService {
 
-* Y ahora guardamos el estado en una señal:
+  * Y ahora guardamos el estado en una señal:
+  * Nota: puesto que aún no hemos visto el ciclo de vida de los componentes
+  * vamos a realizarla solución con lo que sabemos
+  trendingScrollState = signal(0);
 
+}
 
+* Inyectamos el servicio en nuestra clase trending
+* Y guardamos el valor de ScrollTop
 
+export default class TrendingPageComponent {
 
+  gifService = inject(GifService)
+  scrollStateService = inject(ScrollStateService) <<<----Inyectamos el servicio
 
+  this.scrollStateService.trendingScrollState.set(scrollTop); <<<---Guardamos el valor del scroll según bajamos
 
+* Para restaurar el scroll vamos a tener que ver algo sobre el ciclo de vida
+* de los componentes de Angular
+* al implementar AfterViewInit sabemos cuando la vista ya está inicializada
+* y los componentes ya están renderizados:
 
+export default class TrendingPageComponent implements AfterViewInit {
+
+  // cuando la vista ya está inicializada y los componentes ya están renderizados
+  // comprobamos que existe/está cargado el elemento html scrollDiv
+  // Y si lo está asignamos el valor guardado en la señal del servicio
+  // a la variable que maneja el punto del scroll donde lo dejamos la última vez
+
+  ngAfterViewInit(): void { <<<----Implementamos este método obligatorio cuando se implementa la Interfaz
+    const scrollDiv = this.scrollDivRef()?.nativeElement;
+    if(!scrollDiv) return;
+    scrollDiv.scrollTop = this.scrollStateService.trendingScrollState();    
+  }
+
+* Habría soluciones mucho mejores que la explicada pero se abordó esta solución
+* porque nos faltaban conocimientos hasta este punto.
+
+* También podríamos haber abordado la solución no pensando en crear varias señales
+* de guardados de scroll para las distintas páginas
+* sino creando un Record para almacenarlas en un objeto, por ejemplo:
+
+pagesScrollState: Record<string, number> = {
+  'page1': 1000,
+  'page2': 0,
+  'aboutPage': 50,
+  'page20': 0,
+}
 
 
 

@@ -1,6 +1,7 @@
-import { Component, ElementRef, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { GifListComponent } from "../../components/gif-list/gif-list.component";
 import { GifService } from '../../services/gifs.service';
+import { ScrollStateService } from '../../../shared/services/scroll-state.service';
 
 /** Ahora ya no vamos a necesitar este array a a fuego de imágenes cargadas en el array
 const imageUrls: string[] = [
@@ -24,11 +25,24 @@ const imageUrls: string[] = [
   imports: [],
   templateUrl: './trending-page.component.html',
 })
-export default class TrendingPageComponent {
+export default class TrendingPageComponent implements AfterViewInit {
+
   // gifs = imageUrls; *Dejamos de utilizar el array de Gifs a fuego que implementamos al principio
   gifService = inject(GifService)
+  scrollStateService = inject(ScrollStateService)
 
   scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('groupDiv');
+
+  // cuando la vista ya está inicializada y los componentes ya están renderizados
+  // comprobamos que existe/está cargado el elemento html scrollDiv
+  // Y si lo está asignamos el valor guardado en la señal del servicio
+  // a la variable que maneja el punto del scroll donde lo dejamos la última vez
+  ngAfterViewInit(): void {
+    const scrollDiv = this.scrollDivRef()?.nativeElement;
+    if(!scrollDiv) return;
+    scrollDiv.scrollTop = this.scrollStateService.trendingScrollState();
+  }
+
   onScroll(event: Event) {
     const scrollDiv = this.scrollDivRef()?.nativeElement;
     // console.log(scrollDiv);
@@ -38,6 +52,8 @@ export default class TrendingPageComponent {
     const scrollHeight = scrollDiv.scrollHeight;
     const isAtBottom = scrollTop + clientHeight + 300 >= scrollHeight;
     console.log({isAtBottom, scrollTotal: scrollTop+clientHeight, scrollTop, clientHeight, scrollHeight});
+
+    this.scrollStateService.trendingScrollState.set(scrollTop);
 
     if(isAtBottom) {
       // Cargar la siguiente página de gifs al acercarse al final de la página
