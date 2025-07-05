@@ -1355,6 +1355,10 @@ pagesScrollState: Record<string, number> = {
   'page20': 0,
 }
 
+************************************************** (05/07/2025)
+* Depuración de la aplicación
+* Vemos las DevTools de Angular en el navegador Chrome
+* Y como depurar desde VS Studio
 
 
 
